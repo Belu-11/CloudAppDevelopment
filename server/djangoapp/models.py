@@ -11,37 +11,44 @@ from django.conf import settings
 import uuid
 # Create your models here.
 
-# <HINT> Create a Car Make model `class CarMake(models.Model)`:
-# - Name
-# - Description
-# - Any other fields you would like to include in car make model
-# - __str__ method to print a car make object
-# class CarMake(models.Model):
-# 	user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#     )
-# 	name = models.CharField(null=False, max_length=30, default='Toyota')
-# 	descripton = models.CharField(max_length=1000)
+class CarMake(models.Model):
+	name = models.CharField(null=False, max_length=255, default='Toyota')
+	descripton = models.CharField(max_length=1000)
 	
-# 	def __str__(self):
-# 		return "Name: " + self.name + "," + \
-# 			"Description: " + self.description
-
-# <HINT> Create a Car Model model `class CarModel(models.Model):`:
-# - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)
-# - Name
-# - Dealer id, used to refer a dealer created in cloudant database
-# - Type (CharField with a choices argument to provide limited choices such as Sedan, SUV, WAGON, etc.)
-# - Year (DateField)
-# - Any other fields you would like to include in car model
-# - __str__ method to print a car make object
-
-# class CarModel(models.Model):
-# 	pass
-	# users = models.ForeignKey(CarMake, through='Enrollment')
-	# dealer_id = models.ImageField(
-# <HINT> Create a plain Python class `CarDealer` to hold dealer data
+	def __str__(self):
+		return "Name: " + self.name + "," + \
+			"Description: " + self.description
 
 
-# <HINT> Create a plain Python class `DealerReview` to hold review data
+class CarModel(models.Model):
+    CAR_TYPES = [
+        ('SEDAN', 'Sedan'),
+        ('SUV', 'SUV'),
+        ('WAGON', 'Wagon'),
+        # Add more choices as needed
+    ]
+
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    dealer_id = models.CharField(max_length=50)  # Assuming dealer_id is a string
+    car_type = models.CharField(max_length=10, choices=CAR_TYPES)
+    year = models.DateField()
+
+
+    def __str__(self):
+        return f"Car Make: {self.car_make} - Name:{self.name} - Dealer:{self.dealer_id} - Car Type:{self.car_type} ({self.year.year})"
+	
+
+class CarDealer:
+    def __init__(self, dealer_id, name, location):
+        self.dealer_id = dealer_id
+        self.name = name
+        self.location = location
+
+
+class DealerReview:
+    def __init__(self, rating, comment, reviewer_name):
+        self.rating = rating
+        self.comment = comment
+        self.reviewer_name = reviewer_name
+
