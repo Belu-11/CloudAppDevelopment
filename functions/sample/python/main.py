@@ -19,6 +19,9 @@ def main(param_dict):
     """
 
     try:
+        '''
+            The code uses the python-cloudant SDK to communicate with the IBM Cloudant service
+        '''
         client = Cloudant.iam(
             account_name=param_dict["COUCH_USERNAME"],
             api_key=param_dict["IAM_API_KEY"],
@@ -32,4 +35,4 @@ def main(param_dict):
         print("connection error")
         return {"error": err}
 
-    return {"dbs": client.all_dbs()}
+    return {"dbs": client.all_dbs()} # retrieves all the databases
