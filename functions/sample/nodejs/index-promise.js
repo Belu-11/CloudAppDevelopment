@@ -24,17 +24,17 @@ function main(params) {
 }
 
 function getDbs(cloudant) {
-     return new Promise((resolve, reject) => {
-         cloudant.getAllDbs()
-             .then(body => {
-                 resolve({ dbs: body.result });
-             })
-             .catch(err => {
-                  console.log(err);
-                 reject({ err: err });
-             });
-     });
- }
+    return new Promise((resolve, reject) => {
+        cloudant.getAllDbs()
+            .then(body => {
+                resolve({ dbs: body.result });
+            })
+            .catch(err => {
+                console.log(err);
+                reject({ err: err });
+            });
+    });
+}
  
  
  /*
