@@ -11,15 +11,17 @@ urlpatterns = [
     path(route='', view=views.get_dealerships, name='main'),
     path(route='about', view=views.about, name='about'),
     path(route='contact', view=views.contact, name='contact'),
-    
-    path('registration/', views.registration_request, name='registration'),
-    path('login/', views.login_request, name='login'),
-    path('logout/', views.logout_request, name='logout'),
-
+    path(route='registration/', view=views.registration_request, name='registration'),
+    path(route='login/', view=views.login_request, name='login'),
+    path(route='logout/', view=views.logout_request, name='logout'),
 
     # path for dealer reviews view
 
     # path for add a review view
+
+    # path(route='api/dealership', view=views.get_all_dealerships, name='all_dealerships'),
+    # path(route='api/dealership/<str:state>', view=views.get_state_dealerships, name='state_dealerships'),
+    # path(route='api/review/<int:dealer_id>', view=views.get_dealership_reviews, name='dealership_reviews'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)\
  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -6,11 +6,7 @@ const port = process.env.PORT || 3000;
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
 
-const data = {
-    "COUCH_URL": "https://6d298e22-7c6c-4b1a-a164-baaea3fe1fd3-bluemix.cloudantnosqldb.appdomain.cloud",
-    "IAM_API_KEY": "2_1EwK8CoLI19ob0bR6fUwZDA31BKSwWNDDKYcrSm7hk",
-    "COUCH_USERNAME": "6d298e22-7c6c-4b1a-a164-baaea3fe1fd3-bluemix"
-}
+const data = {}
 
 
 // async function main(params) {
@@ -162,16 +158,13 @@ app.get('/dealerships/get', async (req, res) => {
 app.get('/api/dealership', async (req, res) => {
     const { state, id } = req.query;
 
-    // Create a selector object based on query parameters
     const selector = {};
     if (state) {
         selector.state = state;
-        console.info('selector state ==>', selector);
     }
     
     if (id) {
-        selector.id = parseInt(id); // Filter by "id" with a value of 1
-        console.info('selector id ==>', selector);
+        selector.id = parseInt(id);
     }
 
     const queryOptions = {
@@ -193,7 +186,6 @@ app.get('/api/dealership', async (req, res) => {
     }
 });
 
-
 app.get('/api/review', async (req, res) => {
     const { dealerId } = req.query;
 
@@ -201,7 +193,6 @@ app.get('/api/review', async (req, res) => {
     const selector = {};
     if (dealerId) {
         selector.dealership = parseInt(dealerId); // Filter by "id" with a value of 1
-        console.info('selector dealerId ==>', selector);
     }
 
     const queryOptions = {
