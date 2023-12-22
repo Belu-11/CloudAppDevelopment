@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
 
-const data = {}
+const config = require('./config');
 
 
 // async function main(params) {
@@ -46,11 +46,11 @@ async function dbCloudantConnect() {
 	/* Initializes a connection to the Cloudant database using IAM authentication.*/
     try {
 		// Create a new instance of CloudantV1 with IAM authentication
-		const authenticator = new IamAuthenticator({ apikey: data.IAM_API_KEY })
+		const authenticator = new IamAuthenticator({ apikey: config.IAM_API_KEY })
 		const cloudant = CloudantV1.newInstance({
 			authenticator: authenticator
 		});
-		cloudant.setServiceUrl(data.COUCH_URL);
+		cloudant.setServiceUrl(config.COUCH_URL);
         console.info('Connect success! Connected to DB');
 
 		// const db = cloudant.use('dealerships');

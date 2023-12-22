@@ -1,14 +1,21 @@
+import json
+import logging
+from datetime import datetime
+from django.conf import settings
+from decouple import config
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
+from .models import CarModel
 # from .restapis import related methods
+from .restapis import get_dealers_from_cf, get_dealer_by_id, get_dealer_reviews_from_cf, get_dealers_by_state
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from datetime import datetime
-import logging
-import json
+from django.core.serializers import serialize
+
+import requests
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -81,13 +88,64 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        # leadership_list = 
-        return render(request, 'djangoapp/index.html', context)
+        url = config('BASE_URL') + 'dealerships'
+        dealerships = get_dealers_from_cf(url, db_name='dealerships')
+        # print(f"dealerships {str(dealerships)}")
+
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+
+        context = {'dealerships': dealerships}
+        # return render(request, 'djangoapp/index.html', context)
+        return JsonResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == 'GET':
+        url = config('BASE_URL') + 'dealerships'
+        reviews = get_dealer_reviews_from_cf(url, db_name='reviews', dealer_id=dealer_id)
+        new_reviews = obj_to_dict(reviews, 'reviews')
+        print()
+        dealer_details = get_dealer_by_id(url, db_name='dealerships', dealer_id=dealer_id)
+        new_dealer_details = obj_to_dict(dealer_details, 'dealerships')
+        context = {'reviews': new_reviews, 'dealer':  new_dealer_details, 'MEDIA_URL': settings.MEDIA_URL}
+        # return render(request, 'djangoapp/index.html', context)
+        return JsonResponse(context)
+
+
+def get_state_dealerships(request, state):
+    context = {}
+    if request.method == 'GET':
+        url = config('BASE_URL') + 'dealerships'
+        state_dealerships = get_dealers_by_state(url, db_name='dealerships', state=state)
+        # print(f'state_dealerships {str(state_dealerships)}')
+        context = {'dealers': state_dealerships}
+        # return render(request, 'djangoapp/index.html', context)
+        return HttpResponse(context)
+
+def obj_to_dict(object_list, type):
+    new_list = []
+    if type == 'reviews':
+        for obj in object_list:
+            new_dict = {"dealership":obj.dealership, "name":obj.name, "purchase":obj.purchase,
+                    "review":obj.review, "purchase_date":obj.purchase_date, "car_make":obj.car_make,
+                    "car_model":obj.car_model, "car_year":obj.car_year,
+                    "sentiment":obj.review, "id":obj.id}
+            new_list.append(new_dict)
+                
+    if type == 'dealerships':
+        for obj in object_list:
+            new_dict = { "address": obj.address, "city": obj.city, "full_name":obj.full_name,
+                    "id":obj.id, "lat":obj.lat, "long":obj.long,
+                    "short_name":obj.short_name,"state":obj.state,
+                    "zip":obj.zip}
+            new_list.append(new_dict)
+    
+    print(f"type:{type} new list -> {new_list}")
+
+    return new_list
+
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):

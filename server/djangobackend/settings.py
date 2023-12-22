@@ -12,6 +12,18 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+import requests
+from cloudant.client import Cloudant
+from cloudant.error import CloudantException
+
+from ibmcloudant.cloudant_v1 import CloudantV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_cloud_sdk_core import ApiException
+from requests import ConnectionError
+
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,14 +90,68 @@ TEMPLATES = [
 WSGI_APPLICATION = 'djangobackend.wsgi.application'
 
 
+# NLU IBM
+authenticator = IAMAuthenticator(config("NLU_API_KEY"))
+version = '2023-03-25'
+nlu = NaturalLanguageUnderstandingV1(
+        version=version,
+        authenticator=authenticator
+)
+nlu.set_service_url(config('NLU_URL'))
+
+NLU_INSTANCE = nlu
+
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+# Cloudant Database Configuration
+COUCH_USERNAME = config('COUCH_USERNAME')
+IAM_API_KEY = config('IAM_API_KEY')
+COUCH_URL = config('DB_URL')
+COUCH_HOST = config('DB_HOST')
+client = None
+
+
+# try:
+#     client = Cloudant.iam(
+#         account_name=COUCH_USERNAME,
+#         api_key=IAM_API_KEY,
+#         connect=True,
+#     )
+#     print('Connect success! Connected to DB')
+#     print(f"Databases: {client.all_dbs()}")
+# except CloudantException as cloudant_exception:
+#     print("unable to connect")
+#     print(f"error {str(cloudant_exception)}")
+# except (requests.exceptions.RequestException, ConnectionResetError) as err:
+#     print("connection error")
+#     print(f"error {str(err)}")
+
+try:
+    authenticator = IAMAuthenticator(IAM_API_KEY)
+    client = CloudantV1(authenticator=authenticator)
+    client.set_service_url(COUCH_URL)
+
+    # print(f"client {str(client)}")
+except CloudantException as cerr:
+    print("Connection error occurred:")
+    print(cerr)
+except (requests.exceptions.RequestException, ConnectionResetError) as err:
+    print("connection error")
+    print(f"error {str(err)}")
+except Exception as e:
+    print("An error occured while connecting to db")
+    print(f"error {str(e)}")
+
+
+CLOUDANT_DB = client
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
+    }
     # "default": {
     #     "ENGINE": "django.db.backends.postgresql",
     #     "OPTIONS": {
@@ -101,15 +167,6 @@ DATABASES = {
     #     'HOST': config('DB_HOST'),
     #     'PORT': config('DB_PORT', default='5432'),
     # }
-    'cloudant': {
-        'ENGINE': 'cloudant.db.backends.django',
-        'NAME': config('DB_NAME'),
-        'USERNAME': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': '',
-        'ENCRYPTED_CONNECTION': True,  # Use HTTPS
-    }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
