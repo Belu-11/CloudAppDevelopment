@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <meta charset="UTF-8">
-</head>
-<body>
+{% extends '../base.html' %}
+{% block content %}
 
 <!-- Add a Navigation bar -->
-<a class="navbar-brand" href="{% url 'djangoapp:index' %}">Online Course</a>
+{% comment %} <a class="navbar-brand" href="{% url 'djangoapp:main' %}">Online Course</a> {% endcomment %}
 
 <!-- Stylize Login form -->
 <form action="{% url 'djangoapp:login' %}" method="post">
@@ -29,4 +23,4 @@
     <button class="btn btn-primary" type="submit">Login</button>
   </div>
 </form>
-</body>
+{% endblock %}

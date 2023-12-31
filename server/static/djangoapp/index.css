@@ -29,4 +29,10 @@
 .dropdown:hover .dropdown-content {display: block;}
 
 .dropdown:hover .dropbtn {background-color: darkblue;}
+
+.inline-block {
+	display: inline-block;
+	vertical-align: top; /* Adjust vertical alignment as needed */
+	margin-right: 10px; /* Adjust margin as needed */
+}
   

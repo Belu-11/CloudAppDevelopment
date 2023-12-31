@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'djangobackend.wsgi.application'
 
 # NLU IBM
 authenticator = IAMAuthenticator(config("NLU_API_KEY"))
-version = '2023-03-25'
+version = '2022-04-07'
 nlu = NaturalLanguageUnderstandingV1(
         version=version,
         authenticator=authenticator
@@ -132,6 +132,8 @@ try:
     authenticator = IAMAuthenticator(IAM_API_KEY)
     client = CloudantV1(authenticator=authenticator)
     client.set_service_url(COUCH_URL)
+
+    # print(f"Databases: {client.get_all_dbs().get_result()}")
 
     # print(f"client {str(client)}")
 except CloudantException as cerr:

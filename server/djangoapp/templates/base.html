@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dealership Review</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'djangoapp/index.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+	
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+	{% comment %} main page table {% endcomment %}
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+
+
+	{% comment %} <link rel="stylesheet" type="text/css" href="extensions/filter-control/bootstrap-table-filter-control.css">
+	<script src="extensions/filter-control/bootstrap-table-filter-control.js"></script> {% endcomment %}
+
+</head>
+
+    <body class="text-center">
+        <nav class="navbar navbar-expand">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'djangoapp:main' %}">Dealership Reviews</a>
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul style="justify-content:left;" class="navbar-nav">
+                        <li class="navbar-brand">
+                            <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                        </li>
+                        <li class="navbar-brand">
+                            <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                    <li>
+                        <a class="btn btn-link" href="#">{{ user.username }}</a>
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="nav-link" style="font-size:15px" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+		{% comment %} <nav class="navbar navbar-light bg-light">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					  <a class="navbar-brand" href="{% url 'djangoapp:main' %}">Dealership Review</a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+					{% if user.is_authenticated %}
+						<li>
+							<a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+							<a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+						</li>
+					{% else %}
+						<li>
+							<form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+							{% csrf_token %}
+							<div class="input-group">
+									<input type="text" class="form-control" placeholder="Username" name="username" >
+									<input type="password" class="form-control" placeholder="Password" name="psw" >
+									<button class="btn btn-primary" type="submit">Login</button>
+									<a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+							</div>
+							</form>
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		</nav> {% endcomment %}
+        
+		<main role="main" class="row justify-content-center">
+            <div class="main col-lg-9 col-md-12">
+                {% block content %} 
+                {% endblock %}
+            </div>
+        </main>
+
+    </body>
+
+</html>

@@ -15,10 +15,13 @@ urlpatterns = [
     path(route='login/', view=views.login_request, name='login'),
     path(route='logout/', view=views.logout_request, name='logout'),
     path(route='dealer/<int:dealer_id>', view=views.get_dealer_details, name='dealer_details'),
-    path(route='api/dealership/state/<str:state>', view=views.get_state_dealerships, name="state_dealerships")
+    path(route='api/dealership/state/<str:state>', view=views.get_state_dealerships, name="state_dealerships"),
+    path(route='dealer/<int:dealer_id>/new-review', view=views.add_review, name="add_review")
+
     # path for dealer reviews view
 
     # path for add a review view
+    
     # path(route='api/review/<int:dealer_id>', view=views.get_dealership_reviews, name='dealership_reviews'),
     # path(route='api/dealership', view=views.get_all_dealerships, name='all_dealerships'),
     # path(route='api/dealership/<str:state>', view=views.get_state_dealerships, name='state_dealerships'),
