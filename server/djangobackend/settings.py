@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
-from decouple import config
+# from decouple import config
+from dotenv import load_dotenv
 import requests
-from cloudant.client import Cloudant
-from cloudant.error import CloudantException
+# from cloudant.client import Cloudant
+# from cloudant.error import CloudantException
 
 from ibmcloudant.cloudant_v1 import CloudantV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -25,25 +26,24 @@ from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = Path(__file__).resolve().parent.parent
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# print(f"DEBUG: {config('DEBUG', default=False, cast=bool)}")
-# print(f"SECRET_KEY: {config('SECRET_KEY')}")
+# Load environment variables from .env file
+load_dotenv()
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'ao5z(o(z@cvzodm99d32jkxa5e8a1!q_4sqss5-a%n6tg$#h$+'
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = os.environ.get('DEBUG')
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', ]
 
 
 # Application definition
@@ -91,13 +91,13 @@ WSGI_APPLICATION = 'djangobackend.wsgi.application'
 
 
 # NLU IBM
-authenticator = IAMAuthenticator(config("NLU_API_KEY"))
+authenticator = IAMAuthenticator(os.environ.get('NLU_API_KEY'))
 version = '2022-04-07'
 nlu = NaturalLanguageUnderstandingV1(
         version=version,
         authenticator=authenticator
 )
-nlu.set_service_url(config('NLU_URL'))
+nlu.set_service_url(os.environ.get('NLU_URL'))
 
 NLU_INSTANCE = nlu
 
@@ -106,10 +106,10 @@ NLU_INSTANCE = nlu
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 # Cloudant Database Configuration
-COUCH_USERNAME = config('COUCH_USERNAME')
-IAM_API_KEY = config('IAM_API_KEY')
-COUCH_URL = config('DB_URL')
-COUCH_HOST = config('DB_HOST')
+COUCH_USERNAME = os.environ.get('COUCH_USERNAME')
+IAM_API_KEY = os.environ.get('IAM_API_KEY')
+COUCH_URL = os.environ.get('DB_URL')
+COUCH_HOST = os.environ.get('DB_HOST')
 client = None
 
 
@@ -134,11 +134,7 @@ try:
     client.set_service_url(COUCH_URL)
 
     # print(f"Databases: {client.get_all_dbs().get_result()}")
-
     # print(f"client {str(client)}")
-except CloudantException as cerr:
-    print("Connection error occurred:")
-    print(cerr)
 except (requests.exceptions.RequestException, ConnectionResetError) as err:
     print("connection error")
     print(f"error {str(err)}")
@@ -154,21 +150,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-    # "default": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "OPTIONS": {
-    #         "service": "my_service",
-    #         "passfile": ".my_pgpass",
-    #     },
-    # }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': config('DB_NAME'),
-    #     'USER': config('DB_USER'),
-    #     'PASSWORD': config('DB_PASSWORD'),
-    #     'HOST': config('DB_HOST'),
-    #     'PORT': config('DB_PORT', default='5432'),
-    # }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

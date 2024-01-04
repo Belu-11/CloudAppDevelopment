@@ -1,8 +1,10 @@
+import os
 import json
 import logging
 from datetime import datetime
 from django.conf import settings
-from decouple import config
+# from decouple import config
+from dotenv import load_dotenv
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
@@ -19,6 +21,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+# Load environment variables from .env file
+load_dotenv()
 
 def about(request):
     context = {}
@@ -80,7 +84,7 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        url = config('BASE_URL') + 'dealerships'
+        url = os.environ.get('BASE_URL') + 'dealerships'
         dealerships = get_dealers_from_cf(url, db_name='dealerships')
         context = {'dealership_list': dealerships}
         return render(request, 'djangoapp/index.html', context)
@@ -89,7 +93,7 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == 'GET':
-        url = config('BASE_URL') + 'dealerships'
+        url = os.environ.get('BASE_URL') + 'dealerships'
         reviews = get_dealer_reviews_from_cf(url, db_name='reviews', dealer_id=dealer_id)
         dealer_details = get_dealer_by_id(url, db_name='dealerships', dealer_id=dealer_id)
         context = {'reviews': reviews, 'dealer':  dealer_details[0]}
@@ -99,7 +103,7 @@ def get_dealer_details(request, dealer_id):
 def get_state_dealerships(request, state):
     context = {}
     if request.method == 'GET':
-        url = config('BASE_URL') + 'dealerships'
+        url = os.environ.get('BASE_URL') + 'dealerships'
         state_dealerships = get_dealers_by_state(url, db_name='dealerships', state=state)
         context = {'dealers': state_dealerships}
         return render(request, 'djangoapp/index.html', context)
@@ -130,7 +134,7 @@ def add_review(request, dealer_id):
 
             print(f"========== add_review =========== json payload {json_payload}")
 
-            url = config('BASE_URL') + 'reviews'
+            url = os.environ.get('BASE_URL') + 'reviews'
             post_request(url, json_payload, db_name="reviews", dealer_id=dealer_id)
 
         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)

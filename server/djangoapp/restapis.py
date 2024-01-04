@@ -4,8 +4,6 @@ from django.conf import settings
 from datetime import datetime
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
-from decouple import config
-from cloudant.query import Query
 from ibmcloudant.cloudant_v1 import Document
 from ibm_cloud_sdk_core import ApiException
 # from cloudant.client import Cloudant
