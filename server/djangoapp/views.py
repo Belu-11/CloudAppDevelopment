@@ -8,17 +8,33 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-from .models import CarModel
+from .models import *
 # from .restapis import related methods
 from .restapis import get_dealers_from_cf, get_dealer_by_id, get_dealer_reviews_from_cf, get_dealers_by_state, post_request, get_dealer_carmodels
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.core.serializers import serialize
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializer import *
 
 import requests
 
 logger = logging.getLogger(__name__)
 
+class ReactView(APIView):
+    def get(self, request):
+        output = [
+            {"employee": output.employee,
+            "department": output.department}
+            for output in React.objects.all()]
+        return Response(output)
+
+    def post(self, request):
+        serializer = ReactSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
 
 def about(request):
     context = {}

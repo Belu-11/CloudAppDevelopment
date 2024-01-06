@@ -11,6 +11,11 @@ from django.conf import settings
 import uuid
 # Create your models here.
 
+class React(models.Model):
+    employee = models.CharField(max_length=50)
+    department = models.CharField(max_length=200)
+
+
 class CarMake(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=1000)
