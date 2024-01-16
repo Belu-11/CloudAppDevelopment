@@ -9,7 +9,6 @@ except Exception:
 
 from django.conf import settings
 import uuid
-# Create your models here.
 
 class CarMake(models.Model):
     name = models.CharField(max_length=255)
@@ -28,7 +27,6 @@ class CarModel(models.Model):
         ('TRUCK', 'Truck'),
         ('SPORT', 'Sport'),
         ('ROADSTER', 'Roadster'),
-        # Add more choices as needed
     ]
 
     car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
